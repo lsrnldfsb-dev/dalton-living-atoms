@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dalton: Living Atoms</title>
+  <meta name="description" content="Dalton: Living Atoms is an interactive chemistry sandbox for building molecules, exploring elements, and discovering compounds." />
+  <link rel="icon" href="assets/favicon.png" />
+  <meta property="og:title" content="Dalton: Living Atoms" />
+  <meta property="og:description" content="Build molecules, explore elements, and learn chemistry through an interactive sandbox." />
+  <meta property="og:image" content="assets/icon.png" />
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090c;
+      --panel: #0d1117;
+      --panel-2: #131920;
+      --ink: #eef4f8;
+      --muted: #9ab0c2;
+      --faint: #5f7386;
+      --line: #223343;
+      --cyan: #22e3f0;
+      --mint: #7df0c4;
+      --pink: #f45b91;
+      --gold: #ffb65f;
+      --blue: #4ea1e0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 64px;
+      padding: 12px clamp(18px, 4vw, 56px);
+      background: rgba(7, 9, 12, 0.86);
+      border-bottom: 1px solid rgba(34, 51, 67, 0.86);
+      backdrop-filter: blur(16px);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .brand img { width: 34px; height: 34px; border-radius: 8px; }
+    .brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    nav { display: flex; align-items: center; gap: clamp(12px, 2.4vw, 28px); font-size: 0.9rem; color: var(--muted); }
+    nav a { text-decoration: none; }
+    nav a:hover { color: var(--cyan); }
+    .hero {
+      position: relative;
+      min-height: min(780px, calc(100svh - 48px));
+      overflow: hidden;
+      isolation: isolate;
+      background-image: url("assets/splash.png");
+      background-repeat: no-repeat;
+      background-size: min(56vw, 560px) auto;
+      background-position: right clamp(12px, 8vw, 112px) center;
+      border-bottom: 1px solid var(--line);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: rgba(7, 9, 12, 0.58);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(34, 227, 240, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 227, 240, 0.08) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, black 0%, transparent 82%);
+    }
+    .hero-inner {
+      width: min(1180px, calc(100% - 36px));
+      min-height: inherit;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      padding: 56px 0 86px;
+    }
+    .hero-copy { width: min(650px, 100%); }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--mint);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+    }
+    .eyebrow::before { content: ""; width: 34px; height: 2px; background: var(--mint); }
+    h1 {
+      margin: 20px 0 18px;
+      font-size: clamp(3.4rem, 9vw, 7.7rem);
+      line-height: 0.92;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+    .subtitle {
+      max-width: 600px;
+      margin: 0 0 30px;
+      color: #c9d8e5;
+      font-size: clamp(1.08rem, 2vw, 1.36rem);
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, 0.76);
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 750;
+    }
+    .button.primary { border-color: var(--cyan); background: #0b2a31; color: var(--cyan); }
+    .button:hover { transform: translateY(-1px); border-color: var(--mint); color: var(--mint); }
+    main section { padding: clamp(48px, 8vw, 92px) clamp(18px, 4vw, 56px); }
+    .section-inner { width: min(1120px, 100%); margin: 0 auto; }
+    .section-head { max-width: 720px; margin-bottom: 28px; }
+    h2 { margin: 0 0 12px; font-size: clamp(1.85rem, 4vw, 3.2rem); line-height: 1.04; letter-spacing: 0; }
+    .lead { margin: 0; color: var(--muted); font-size: 1.03rem; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: -36px; position: relative; z-index: 2; }
+    .stat, .feature, .privacy, .support-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, 0.86);
+    }
+    .stat { padding: 20px; }
+    .stat strong { display: block; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1; color: var(--cyan); }
+    .stat span { color: var(--muted); font-size: 0.92rem; }
+    .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .feature { min-height: 210px; padding: 22px; position: relative; overflow: hidden; }
+    .feature::before { content: ""; display: block; width: 42px; height: 4px; margin-bottom: 22px; background: var(--accent, var(--cyan)); border-radius: 99px; }
+    .feature h3 { margin: 0 0 10px; font-size: 1.12rem; }
+    .feature p { margin: 0; color: var(--muted); }
+    .feature:nth-child(2) { --accent: var(--mint); }
+    .feature:nth-child(3) { --accent: var(--pink); }
+    .feature:nth-child(4) { --accent: var(--gold); }
+    .feature:nth-child(5) { --accent: var(--blue); }
+    .feature:nth-child(6) { --accent: #b8d0d4; }
+    .interface { background: #0a0e13; border-block: 1px solid var(--line); }
+    .interface-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(24px, 5vw, 56px); align-items: center; }
+    .phone {
+      width: min(340px, 100%);
+      aspect-ratio: 9 / 18.5;
+      margin: 0 auto;
+      padding: 18px;
+      border: 1px solid #294458;
+      border-radius: 36px;
+      background: #05080b;
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
+    }
+    .screen {
+      height: 100%;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background: #07090c;
+      display: grid;
+      grid-template-rows: 42% 1fr;
+    }
+    .screen-top { position: relative; background: url("assets/icon.png") center 18px / 72% auto no-repeat; border-bottom: 1px solid var(--line); }
+    .screen-top span { position: absolute; left: 18px; bottom: 16px; color: var(--cyan); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 800; letter-spacing: 0.12em; }
+    .tile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; }
+    .tile { border: 1px solid #253849; border-radius: 8px; min-height: 70px; padding: 10px; background: #0d1117; color: var(--muted); font-size: 0.76rem; }
+    .tile b { display: block; color: var(--ink); margin-bottom: 4px; font-size: 0.8rem; }
+    .privacy { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px; padding: 24px; }
+    .privacy p { margin: 6px 0 0; color: var(--muted); }
+    .support-row { margin-top: 14px; padding: 18px 24px; color: var(--muted); }
+    footer { padding: 28px clamp(18px, 4vw, 56px); border-top: 1px solid var(--line); color: var(--faint); font-size: 0.88rem; }
+    .footer-inner { width: min(1120px, 100%); margin: 0 auto; display: flex; flex-wrap: wrap; gap: 12px 24px; justify-content: space-between; }
+    @media (max-width: 820px) {
+      nav a:nth-child(1), nav a:nth-child(2) { display: none; }
+      .hero { background-size: min(88vw, 420px) auto; background-position: center bottom -190px; min-height: auto; }
+      .hero::before { background: rgba(7, 9, 12, 0.72); }
+      .hero-inner { min-height: calc(100svh - 112px); align-items: flex-start; padding-top: 58px; }
+      .hero-copy { padding-bottom: 300px; }
+      .stats, .features, .interface-grid, .privacy { grid-template-columns: 1fr; }
+      .stats { margin-top: -22px; }
+    }
+    @media (max-width: 480px) {
+      .brand span { max-width: 148px; }
+      .site-header { padding-inline: 14px; }
+      .hero-inner { width: min(100% - 28px, 1180px); }
+      .actions .button { width: 100%; }
+      h1 { font-size: clamp(3.1rem, 18vw, 5rem); }
+      .hero-copy { padding-bottom: 260px; }
+      .privacy .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Dalton home"><img src="assets/icon.png" alt="" /><span>Dalton</span></a>
+    <nav aria-label="Primary navigation">
+      <a href="#features">Features</a>
+      <a href="#inside">Inside the app</a>
+      <a href="https://lsrnldfsb-dev.github.io/dalton-privacy/">Privacy</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="top" aria-label="Dalton: Living Atoms">
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Living chemistry sandbox</span>
+        <h1>Dalton</h1>
+        <p class="subtitle">Build molecules on a canvas, explore element behavior, and discover real compounds through playful chemistry challenges.</p>
+        <div class="actions">
+          <a class="button primary" href="#features">Explore the app</a>
+          <a class="button" href="https://lsrnldfsb-dev.github.io/dalton-privacy/">Privacy policy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section aria-label="App catalog counts">
+      <div class="section-inner stats">
+        <div class="stat"><strong>696</strong><span>compound entries for learning and lookup</span></div>
+        <div class="stat"><strong>695</strong><span>discovery challenges in the current catalog</span></div>
+        <div class="stat"><strong>100+</strong><span>elements with valence, shells, and category data</span></div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>A lab bench that fits in your hand.</h2>
+          <p class="lead">Dalton turns chemistry into a direct manipulation experience: place atoms, form bonds, validate structures, and learn by making.</p>
+        </div>
+        <div class="features">
+          <article class="feature"><h3>Build freely</h3><p>Use the sandbox canvas to arrange atoms, connect bonds, adjust charges, and see formulas emerge as structures become stable.</p></article>
+          <article class="feature"><h3>Discover compounds</h3><p>Guided challenges invite learners to assemble molecules and grow a personal discovery history.</p></article>
+          <article class="feature"><h3>Explore elements</h3><p>Browse an element library with shells, valence behavior, category colors, masses, and quick reference data.</p></article>
+          <article class="feature"><h3>Convert structures</h3><p>Work with SMILES and InChI codes for chemistry workflows that bridge classroom sketches and real identifiers.</p></article>
+          <article class="feature"><h3>Local-first learning</h3><p>Core chemistry data and saved progress live on the device, with graceful offline behavior when network services are unavailable.</p></article>
+          <article class="feature"><h3>Public data lookup</h3><p>When online, Dalton can use chemistry services and PubChem to help parse, validate, and enrich molecular structures.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="interface" id="inside">
+      <div class="section-inner interface-grid">
+        <div class="phone" aria-label="Dalton app interface preview">
+          <div class="screen">
+            <div class="screen-top"><span>DALTON</span></div>
+            <div class="tile-grid">
+              <div class="tile"><b>Sandbox</b>Build any molecule</div>
+              <div class="tile"><b>Discovery</b>Guided challenges</div>
+              <div class="tile"><b>Elements</b>Detailed info</div>
+              <div class="tile"><b>Converter</b>SMILES and InChI</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="section-head">
+            <h2>Designed for curious chemistry practice.</h2>
+            <p class="lead">The app keeps the interface focused: a molecule canvas, clear element tools, fast feedback, and compact reference screens for repeated learning.</p>
+          </div>
+          <div class="privacy">
+            <div>
+              <strong>Privacy-first by design</strong>
+              <p>No accounts, ads, third-party analytics, or personal data collection. Progress and settings stay local on the device.</p>
+            </div>
+            <a class="button primary" href="https://lsrnldfsb-dev.github.io/dalton-privacy/">Read policy</a>
+          </div>
+          <div class="support-row">Questions or support: <a href="mailto:lsrnldfsb@gmail.com">lsrnldfsb@gmail.com</a></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <span>Dalton: Living Atoms · Developer: athanor</span>
+      <span><a href="mailto:lsrnldfsb@gmail.com">lsrnldfsb@gmail.com</a></span>
+    </div>
+  </footer>
+</body>
+</html>
