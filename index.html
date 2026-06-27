@@ -8,7 +8,7 @@
   <link rel="icon" href="assets/favicon.png" />
   <meta property="og:title" content="Dalton: Living Atoms" />
   <meta property="og:description" content="Build molecules, explore elements, and learn chemistry through an interactive sandbox." />
-  <meta property="og:image" content="assets/icon.png" />
+  <meta property="og:image" content="assets/screenshots/discovery-results.jpeg" />
   <style>
     :root {
       color-scheme: dark;
@@ -168,30 +168,54 @@
     .feature:nth-child(6) { --accent: #b8d0d4; }
     .interface { background: #0a0e13; border-block: 1px solid var(--line); }
     .interface-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: clamp(24px, 5vw, 56px); align-items: center; }
+    .screenshot-stack { display: grid; gap: 16px; justify-items: center; }
     .phone {
-      width: min(340px, 100%);
-      aspect-ratio: 9 / 18.5;
+      width: min(365px, 100%);
       margin: 0 auto;
-      padding: 18px;
+      padding: 10px;
       border: 1px solid #294458;
-      border-radius: 36px;
+      border-radius: 32px;
       background: #05080b;
       box-shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
     }
-    .screen {
-      height: 100%;
-      border: 1px solid var(--line);
+    figure { margin: 0; }
+    .phone img, .shot-card img {
+      display: block;
+      width: 100%;
+      height: auto;
       border-radius: 24px;
-      overflow: hidden;
+      border: 1px solid rgba(34, 51, 67, 0.9);
       background: #07090c;
-      display: grid;
-      grid-template-rows: 42% 1fr;
     }
-    .screen-top { position: relative; background: url("assets/icon.png") center 18px / 72% auto no-repeat; border-bottom: 1px solid var(--line); }
-    .screen-top span { position: absolute; left: 18px; bottom: 16px; color: var(--cyan); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 800; letter-spacing: 0.12em; }
-    .tile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; }
-    .tile { border: 1px solid #253849; border-radius: 8px; min-height: 70px; padding: 10px; background: #0d1117; color: var(--muted); font-size: 0.76rem; }
-    .tile b { display: block; color: var(--ink); margin-bottom: 4px; font-size: 0.8rem; }
+    .phone figcaption, .shot-card figcaption {
+      margin-top: 10px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.76rem;
+      text-align: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .screenshot-gallery {
+      width: min(520px, 100%);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .shot-card {
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(13, 17, 23, 0.74);
+    }
+    .shot-card img {
+      aspect-ratio: 945 / 2048;
+      object-fit: cover;
+      object-position: top center;
+      border-radius: 6px;
+    }
+    .shot-card figcaption { font-size: 0.66rem; }
     .privacy { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 20px; padding: 24px; }
     .privacy p { margin: 6px 0 0; color: var(--muted); }
     .support-row { margin-top: 14px; padding: 18px 24px; color: var(--muted); }
@@ -269,15 +293,24 @@
 
     <section class="interface" id="inside">
       <div class="section-inner interface-grid">
-        <div class="phone" aria-label="Dalton app interface preview">
-          <div class="screen">
-            <div class="screen-top"><span>DALTON</span></div>
-            <div class="tile-grid">
-              <div class="tile"><b>Sandbox</b>Build any molecule</div>
-              <div class="tile"><b>Discovery</b>Guided challenges</div>
-              <div class="tile"><b>Elements</b>Detailed info</div>
-              <div class="tile"><b>Converter</b>SMILES and InChI</div>
-            </div>
+        <div class="screenshot-stack" aria-label="Dalton app screenshots">
+          <figure class="phone">
+            <img src="assets/screenshots/discovery-results.jpeg" alt="Dalton discovery mode showing an isopropanol molecule and stable molecule results" />
+            <figcaption>Discovery + results</figcaption>
+          </figure>
+          <div class="screenshot-gallery" aria-label="Additional Dalton screenshots">
+            <figure class="shot-card">
+              <img src="assets/screenshots/home.jpeg" alt="Dalton home screen with sandbox, discovery, elements, molecules, converter, and bonds options" />
+              <figcaption>Home</figcaption>
+            </figure>
+            <figure class="shot-card">
+              <img src="assets/screenshots/converter.jpeg" alt="Dalton converter screen for InChI and SMILES chemistry structure codes" />
+              <figcaption>Converter</figcaption>
+            </figure>
+            <figure class="shot-card">
+              <img src="assets/screenshots/elements.jpeg" alt="Dalton sandbox screen with element library cards" />
+              <figcaption>Elements</figcaption>
+            </figure>
           </div>
         </div>
         <div>
